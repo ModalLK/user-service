@@ -64,6 +64,23 @@ public class AdminService {
         userRepository.delete(user);
     }
 
+    public UserResponse deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        user.setIsActive(false);
+        userRepository.save(user);
+        return mapToUserResponse(user);
+    }
+
+    public UserResponse activateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        user.setIsActive(true);
+        userRepository.save(user);
+        return mapToUserResponse(user);
+    }
+
+
 
 
 }

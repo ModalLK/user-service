@@ -55,6 +55,21 @@ public class AdminController {
         return ResponseEntity.ok("User deleted successfully");
     }
 
+    @PutMapping("/users/{id}/deactivate")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Deactivate user", description = "Deactivate a user account. ADMIN only.")
+    public ResponseEntity<UserResponse> deactivateUser(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.deactivateUser(id));
+    }
+
+    @PutMapping("/users/{id}/activate")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Activate user", description = "Activate a deactivated user account. ADMIN only.")
+    public ResponseEntity<UserResponse> activateUser(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.activateUser(id));
+    }
+
+
 
 
 }

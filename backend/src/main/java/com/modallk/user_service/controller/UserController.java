@@ -1,5 +1,6 @@
 package com.modallk.user_service.controller;
 
+import com.modallk.user_service.dto.ChangePasswordRequest;
 import com.modallk.user_service.dto.UpdateProfileRequest;
 import com.modallk.user_service.dto.UserResponse;
 import com.modallk.user_service.service.UserService;
@@ -39,6 +40,15 @@ public class UserController {
         userService.deleteMyAccount();
         return ResponseEntity.ok("Account deleted successfully");
     }
+
+    @PutMapping("/change-password")
+    @Operation(summary = "Change password", description = "Logged-in user can change their password.")
+    public ResponseEntity<String> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
 
 
 }
