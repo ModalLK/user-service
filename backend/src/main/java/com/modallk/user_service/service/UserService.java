@@ -58,5 +58,17 @@ public class UserService {
         return mapToUserResponse(user);
     }
 
+    public void deleteMyAccount() {
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userRepository.delete(user);
+    }
+
+
 }
 

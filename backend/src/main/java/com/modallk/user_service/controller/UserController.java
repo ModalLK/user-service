@@ -33,4 +33,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateMyProfile(request));
     }
 
+    @DeleteMapping("/profile")
+    @Operation(summary = "Delete my account", description = "Permanently delete the logged-in user's account.")
+    public ResponseEntity<String> deleteMyAccount() {
+        userService.deleteMyAccount();
+        return ResponseEntity.ok("Account deleted successfully");
+    }
+
+
 }
