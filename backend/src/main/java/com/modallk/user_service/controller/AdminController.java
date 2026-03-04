@@ -47,6 +47,15 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateUserRole(id, request));
     }
 
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Delete user", description = "Permanently delete a user account. ADMIN only.")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        adminService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successfully");
+    }
+
+
 
 }
 
