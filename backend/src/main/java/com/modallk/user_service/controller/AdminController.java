@@ -1,5 +1,6 @@
 package com.modallk.user_service.controller;
 
+import com.modallk.user_service.dto.UpdateRoleRequest;
 import com.modallk.user_service.dto.UserResponse;
 import com.modallk.user_service.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.modallk.user_service.dto.UpdateRoleRequest;
+
 
 import java.util.List;
 
@@ -34,6 +37,16 @@ public class AdminController {
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(adminService.getUserById(id));
     }
+
+    @PutMapping("/users/{id}/role")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Update user role", description = "Change a user's role to ADMIN or USER. ADMIN only.")
+    public ResponseEntity<UserResponse> updateUserRole(
+            @PathVariable Long id,
+            @RequestBody UpdateRoleRequest request) {
+        return ResponseEntity.ok(adminService.updateUserRole(id, request));
+    }
+
 
 }
 
