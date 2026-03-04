@@ -35,4 +35,11 @@ public class AdminService {
                 .updatedAt(user.getUpdatedAt())
                 .build();
     }
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return mapToUserResponse(user);
+    }
+
 }
