@@ -9,8 +9,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Base64;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,33 +25,39 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/profile")
-    @Operation(summary = "Get my profile", description = "Returns the logged-in user's profile details.")
+    @Operation(summary = "Get my profile")
     public ResponseEntity<UserResponse> getMyProfile() {
         return ResponseEntity.ok(userService.getMyProfile());
     }
 
     @PutMapping("/profile")
-    @Operation(summary = "Update my profile", description = "Update the logged-in user's profile details.")
+    @Operation(summary = "Update my profile")
     public ResponseEntity<UserResponse> updateMyProfile(
             @Valid @RequestBody UpdateProfileRequest request) {
         return ResponseEntity.ok(userService.updateMyProfile(request));
     }
 
+    @PutMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload profile image")
+    public ResponseEntity<UserResponse> uploadProfileImage(
+            @RequestParam("image") MultipartFile image) throws Exception {
+        String base64 = Base64.getEncoder().encodeToString(image.getBytes());
+        String dataUrl = "data:" + image.getContentType() + ";base64," + base64;
+        return ResponseEntity.ok(userService.updateProfileImage(dataUrl));
+    }
+
     @DeleteMapping("/profile")
-    @Operation(summary = "Delete my account", description = "Permanently delete the logged-in user's account.")
+    @Operation(summary = "Delete my account")
     public ResponseEntity<String> deleteMyAccount() {
         userService.deleteMyAccount();
         return ResponseEntity.ok("Account deleted successfully");
     }
 
     @PutMapping("/change-password")
-    @Operation(summary = "Change password", description = "Logged-in user can change their password.")
+    @Operation(summary = "Change password")
     public ResponseEntity<String> changePassword(
             @Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ResponseEntity.ok("Password changed successfully");
     }
-
-
-
 }

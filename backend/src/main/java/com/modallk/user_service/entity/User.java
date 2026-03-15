@@ -43,6 +43,13 @@ public class User {
 
     private LocalDateTime updatedAt;
 
+    private String address;
+
+    @Column(columnDefinition = "TEXT")
+    private String profileImage;
+
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

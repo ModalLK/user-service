@@ -17,56 +17,45 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponse getMyProfile() {
+    private User getCurrentUser() {
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-
-        User user = userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
-        return mapToUserResponse(user);
+    public UserResponse getMyProfile() {
+        return mapToUserResponse(getCurrentUser());
     }
 
     public UserResponse updateMyProfile(UpdateProfileRequest request) {
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+        User user = getCurrentUser();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
+        user.setAddress(request.getAddress());        // new
+        userRepository.save(user);
+        return mapToUserResponse(user);
+    }
 
+    public UserResponse updateProfileImage(String imageDataUrl) {  // new
+        User user = getCurrentUser();
+        user.setProfileImage(imageDataUrl);
         userRepository.save(user);
         return mapToUserResponse(user);
     }
 
     public void deleteMyAccount() {
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        userRepository.delete(user);
+        userRepository.delete(getCurrentUser());
     }
 
     public void changePassword(ChangePasswordRequest request) {
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getCurrentUser();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
-
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new RuntimeException("New password and confirm password do not match");
         }
@@ -82,6 +71,8 @@ public class UserService {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .address(user.getAddress())
+                .profileImage(user.getProfileImage())
                 .role(user.getRole())
                 .isActive(user.getIsActive())
                 .createdAt(user.getCreatedAt())
@@ -89,3 +80,4 @@ public class UserService {
                 .build();
     }
 }
+
