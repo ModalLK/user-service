@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;   // ✅ added
+
+import java.io.IOException;                               // ✅ added
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;    // ✅ added
 
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext()
@@ -34,12 +38,12 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());        // new
+        user.setAddress(request.getAddress());
         userRepository.save(user);
         return mapToUserResponse(user);
     }
 
-    public UserResponse updateProfileImage(String imageDataUrl) {  // new
+    public UserResponse updateProfileImage(String imageDataUrl) {
         User user = getCurrentUser();
         user.setProfileImage(imageDataUrl);
         userRepository.save(user);
@@ -64,6 +68,15 @@ public class UserService {
         userRepository.save(user);
     }
 
+
+    public UserResponse uploadProfileImageToCloudinary(MultipartFile image) throws IOException {
+        String imageUrl = cloudinaryService.uploadImage(image, "user-profiles");
+        User user = getCurrentUser();
+        user.setProfileImage(imageUrl);
+        userRepository.save(user);
+        return mapToUserResponse(user);
+    }
+
     private UserResponse mapToUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
@@ -80,4 +93,3 @@ public class UserService {
                 .build();
     }
 }
-

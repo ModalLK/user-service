@@ -41,9 +41,7 @@ public class UserController {
     @Operation(summary = "Upload profile image")
     public ResponseEntity<UserResponse> uploadProfileImage(
             @RequestParam("image") MultipartFile image) throws Exception {
-        String base64 = Base64.getEncoder().encodeToString(image.getBytes());
-        String dataUrl = "data:" + image.getContentType() + ";base64," + base64;
-        return ResponseEntity.ok(userService.updateProfileImage(dataUrl));
+        return ResponseEntity.ok(userService.uploadProfileImageToCloudinary(image));
     }
 
     @DeleteMapping("/profile")
