@@ -22,7 +22,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserService userService;       // ✅ added
+    private final UserService userService;       
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
